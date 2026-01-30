@@ -2,7 +2,6 @@
 
 JSON_FILE="Advanced_shell/data.json"
 
-# cat "$JSON_FILE"
 # Use jq to extract specific fields from the JSON file
 name=$(jq -r '.name' "$JSON_FILE" | sed 's/.*/\u&/')
 height=$(jq -r '.height' "$JSON_FILE")
@@ -12,7 +11,7 @@ type=$(jq -r '.types[0].type.name' "$JSON_FILE" | sed 's/.*/\u&/')
 # Convert height from decimetres to metres
 height_m=$(awk -v h="$height" 'BEGIN {printf "%.1f", h/10}')
 # Convert weight from hectograms to kilograms
-weight_kg=$(awk -v w="$weight" 'BEGIN {printf "%.1f", w/10}')
+weight_kg=$(awk -v w="$weight" 'BEGIN {printf "%.f", w/10}')
 
 # Final format output
-echo "$name is of type $type, weighs $weight_kg kg and is $height_m m tall."
+echo "$name is of type $type, weighs $weight_kg"kg" and is $height_m"m" tall."
