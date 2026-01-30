@@ -1,18 +1,15 @@
 #!/bin/bash
 
 POkEMON_LIST=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
-OUTPUT_FILE="Advanced_shell/pokemon.json"
-
-:> "$OUTPUT_FILE"  # Clear previous output file
+OUTPUT_DIR="Advanced_shell"
 
 for pokemon in "${POkEMON_LIST[@]}"; do
     API_URL="https://pokeapi.co/api/v2/pokemon/$pokemon"
     echo "Fetching data for $pokemon ..."
     
-    status_code=$(curl -s -w "%{http_code}" "$API_URL" -o "$OUTPUT_FILE")
+    status_code=$(curl -s -w "%{http_code}" "$API_URL" -o "$OUTPUT_DIR/$pokemon.json")
 
     if [ "$status_code" -eq 200 ]; then
-        echo "" >> "$OUTPUT_FILE"  # Add a newline for separation
         echo "Successfully fetched data for $pokemon"
     else
         echo "Failed to fetch data for $pokemon. Status code: $status_code"
