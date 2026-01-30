@@ -2,18 +2,33 @@
 
 POkEMON_LIST=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 OUTPUT_DIR="Advanced_shell"
+ERROR_LOG="Advanced_shell/api_errors.txt"
+
+:> "$ERROR_LOG"  # Clear previous error log
 
 for pokemon in "${POkEMON_LIST[@]}"; do
     API_URL="https://pokeapi.co/api/v2/pokemon/$pokemon"
     echo "Fetching data for $pokemon ..."
-    
-    status_code=$(curl -s -w "%{http_code}" "$API_URL" -o "$OUTPUT_DIR/$pokemon.json")
+    success=false
 
-    if [ "$status_code" -eq 200 ]; then
-        echo "Successfully fetched data for $pokemon"
-    else
-        echo "Failed to fetch data for $pokemon. Status code: $status_code"
+    for attempt in {1..3}; do
+        echo "Attempt $attempt for $pokemon"
+        status_code=$(curl -s -w "%{http_code}" "$API_URL" -o "$OUTPUT_DIR/$pokemon.json")
+        
+        if [ "$status_code" -eq 200 ]; then
+            echo "Saved data for $OUTPUT_DIR/$pokemon.json"
+            success=true
+            break
+        else
+            echo "Failed (HTTP $status_code). Retrying..."
+            sleep 1  # Wait before retrying
+        fi
+    done
+
+    if [ "$success" = false ]; then
+        echo "[$(date)] Failed to fetch data for $pokemon after 3 attempts. Last status code: $status_code" >> "$ERROR_LOG"
+        rm -f "$OUTPUT_DIR/$pokemon.json"  # Remove incomplete output file
+        continue
     fi
-
     sleep 1  # Pause for 1 second between requests
 done
