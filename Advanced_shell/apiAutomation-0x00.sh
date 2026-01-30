@@ -1,0 +1,16 @@
+#!/bin/bash
+
+API_URL="https://pokeapi.co/api/v2/pokemon/pikachu"
+OUTPUT_FILE="data.json"
+ERROR_FILE="error.txt"
+
+# Make the API request and capture output and errors
+echo "Making API request to $API_URL"
+response=$(curl -s -w "%{http_code}" "$API_URL" -o "$OUTPUT_FILE")
+
+status_code=$response
+
+if [ "$status_code" -ne 200 ]; then
+    echo "[$(date)] Request failed with status code $status_code" >> "$ERROR_FILE"
+    rm -f "$OUTPUT_FILE"    # Remove incomplete output file
+fi 
