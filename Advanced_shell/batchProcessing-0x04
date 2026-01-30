@@ -29,4 +29,15 @@ done
 
 wait  # Wait for all background processes to finish
 
-echo "All requests completed."
+echo "Active background jobs: $(jobs -r | wc -l)"
+wait 
+
+echo "All jobs completed."
+
+dummy_sleep() {
+    sleep 1
+}
+dummy_sleep &
+DUMMY_PID=$!
+
+kill -0 $DUMMY_PID 2>/dev/null
